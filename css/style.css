@@ -1,0 +1,2304 @@
+/**
+ * How You Watch — Design System & Component Styles
+ * 
+ * Mobile-first, dark theme, Reddit-inspired layout.
+ * Uses CSS custom properties for theming.
+ */
+
+/* ============================================================
+   FONTS — Poppins, self-hosted
+   ------------------------------------------------------------
+   Served from assets/fonts/ instead of fonts.googleapis.com. The Google
+   Fonts stylesheet was a render-blocking cross-origin request (DNS + TLS
+   to two hosts, then a CSS fetch, then the woff2) before first paint —
+   ~850ms on a cold connection, measured 2026-10-09. Same files Google
+   serves (Poppins v24, latin + latin-ext subsets, unicode-range so a
+   subset is only fetched when a glyph needs it); weight 300 was loaded but
+   never used, so it's gone. font-display: swap keeps text visible in the
+   fallback face until the woff2 lands. URLs are relative to this file so
+   /css/style.css and css/style.css both resolve.
+   ============================================================ */
+
+@font-face {
+  font-family: 'Poppins';
+  font-style: normal;
+  font-weight: 400;
+  font-display: swap;
+  src: url('../assets/fonts/poppins-400-latin-ext.woff2') format('woff2');
+  unicode-range: U+0100-02BA, U+02BD-02C5, U+02C7-02CC, U+02CE-02D7, U+02DD-02FF, U+0304, U+0308, U+0329, U+1D00-1DBF, U+1E00-1E9F, U+1EF2-1EFF, U+2020, U+20A0-20AB, U+20AD-20C4, U+2113, U+2C60-2C7F, U+A720-A7FF;
+}
+@font-face {
+  font-family: 'Poppins';
+  font-style: normal;
+  font-weight: 400;
+  font-display: swap;
+  src: url('../assets/fonts/poppins-400-latin.woff2') format('woff2');
+  unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+0304, U+0308, U+0329, U+2000-206F, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD;
+}
+@font-face {
+  font-family: 'Poppins';
+  font-style: normal;
+  font-weight: 500;
+  font-display: swap;
+  src: url('../assets/fonts/poppins-500-latin-ext.woff2') format('woff2');
+  unicode-range: U+0100-02BA, U+02BD-02C5, U+02C7-02CC, U+02CE-02D7, U+02DD-02FF, U+0304, U+0308, U+0329, U+1D00-1DBF, U+1E00-1E9F, U+1EF2-1EFF, U+2020, U+20A0-20AB, U+20AD-20C4, U+2113, U+2C60-2C7F, U+A720-A7FF;
+}
+@font-face {
+  font-family: 'Poppins';
+  font-style: normal;
+  font-weight: 500;
+  font-display: swap;
+  src: url('../assets/fonts/poppins-500-latin.woff2') format('woff2');
+  unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+0304, U+0308, U+0329, U+2000-206F, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD;
+}
+@font-face {
+  font-family: 'Poppins';
+  font-style: normal;
+  font-weight: 600;
+  font-display: swap;
+  src: url('../assets/fonts/poppins-600-latin-ext.woff2') format('woff2');
+  unicode-range: U+0100-02BA, U+02BD-02C5, U+02C7-02CC, U+02CE-02D7, U+02DD-02FF, U+0304, U+0308, U+0329, U+1D00-1DBF, U+1E00-1E9F, U+1EF2-1EFF, U+2020, U+20A0-20AB, U+20AD-20C4, U+2113, U+2C60-2C7F, U+A720-A7FF;
+}
+@font-face {
+  font-family: 'Poppins';
+  font-style: normal;
+  font-weight: 600;
+  font-display: swap;
+  src: url('../assets/fonts/poppins-600-latin.woff2') format('woff2');
+  unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+0304, U+0308, U+0329, U+2000-206F, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD;
+}
+@font-face {
+  font-family: 'Poppins';
+  font-style: normal;
+  font-weight: 700;
+  font-display: swap;
+  src: url('../assets/fonts/poppins-700-latin-ext.woff2') format('woff2');
+  unicode-range: U+0100-02BA, U+02BD-02C5, U+02C7-02CC, U+02CE-02D7, U+02DD-02FF, U+0304, U+0308, U+0329, U+1D00-1DBF, U+1E00-1E9F, U+1EF2-1EFF, U+2020, U+20A0-20AB, U+20AD-20C4, U+2113, U+2C60-2C7F, U+A720-A7FF;
+}
+@font-face {
+  font-family: 'Poppins';
+  font-style: normal;
+  font-weight: 700;
+  font-display: swap;
+  src: url('../assets/fonts/poppins-700-latin.woff2') format('woff2');
+  unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+0304, U+0308, U+0329, U+2000-206F, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD;
+}
+
+/* ============================================================
+   DESIGN TOKENS
+   ============================================================ */
+
+:root {
+  /* Colors — Andrew Morgan Watches: dark, editorial, high-contrast.
+     ~70% black, ~25% white, ~5% neon accent — the chartreuse reads
+     loudest when it stays rare. */
+  --bg-canvas: #000000;        /* Ink Black — dominant surface */
+  --bg-surface: #0d0d0d;       /* Off-black cards / panels */
+  --bg-surface-hover: #161616;
+  --bg-comment: #0d0d0d;
+  --bg-input: #161616;
+  --bg-header: rgba(0, 0, 0, 0.85);
+
+  --accent: #e1f003;           /* Volt Chartreuse — CTAs, links, highlights */
+  --accent-hover: #eaff2e;
+  --accent-dim: rgba(225, 240, 3, 0.14);
+
+  --orange: #c7632f;           /* Burnt Orange — logo/wordmark only */
+
+  --text-primary: #ffffff;     /* Pure White — headings, body, icons */
+  --text-secondary: #8a8a8a;   /* Slate Grey — secondary text, metadata */
+  --text-link: #e1f003;        /* Links carry the accent */
+  --text-muted: #767676;       /* Meets AA 4.5:1 on black (placeholders, meta) */
+
+  --border: #2a2a2a;           /* Hairline on black */
+  --separator: #222222;
+
+  --tier-0: #ffd700;
+  --tier-1: #c0c0c0;
+  --tier-2: #cd7f32;
+  --tier-3: #8a8a8a;
+
+  --danger: #ff4444;
+  --success: #318b34;
+
+  /* Typography — one geometric sans does all the work.
+     Headlines heavy & UPPERCASE; body light-weight, sentence case. */
+  --font-family: 'Poppins', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+
+  --fs-xs: 0.6875rem;   /* 11px */
+  --fs-sm: 0.75rem;     /* 12px */
+  --fs-base: 0.875rem;  /* 14px */
+  --fs-md: 0.9375rem;   /* 15px */
+  --fs-lg: 1.125rem;    /* 18px */
+  --fs-xl: 1.5rem;      /* 24px */
+
+  --fw-normal: 400;
+  --fw-medium: 500;
+  --fw-semibold: 600;
+  --fw-bold: 700;
+
+  --lh-tight: 1.3;
+  --lh-normal: 1.5;
+
+  /* Spacing */
+  --sp-1: 4px;
+  --sp-2: 8px;
+  --sp-3: 12px;
+  --sp-4: 16px;
+  --sp-5: 20px;
+  --sp-6: 24px;
+  --sp-8: 32px;
+
+  /* Layout */
+  --max-width: 760px;
+  --header-height: 52px;
+  --footer-height: 52px;
+
+  /* Borders */
+  --radius-sm: 4px;
+  --radius-md: 8px;
+  --radius-lg: 20px;
+  --radius-full: 50%;
+
+  /* Transitions */
+  --transition-fast: 150ms ease;
+  --transition-normal: 250ms ease;
+}
+
+/* ============================================================
+   RESET & BASE
+   ============================================================ */
+
+*, *::before, *::after {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+/* Anything scrolled into view (keyboard focus, scrollIntoView, in-page
+   anchors) must land below the sticky header — without this, scroll
+   targets sit underneath it and taps hit the header instead. Applies to
+   every element because scroll targets include controls INSIDE cards
+   (vote/star/expand buttons), not just the cards themselves. */
+* {
+  scroll-margin-top: calc(var(--header-height) + var(--sp-2));
+}
+
+html {
+  font-size: 16px;
+  -webkit-text-size-adjust: 100%;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+body {
+  font-family: var(--font-family);
+  font-size: var(--fs-base);
+  line-height: var(--lh-normal);
+  color: var(--text-primary);
+  background-color: var(--bg-canvas);
+  min-height: 100vh;
+  overflow-x: hidden;
+  /* Reserve room for the fixed footer so page content ends above it and the
+     footer never overlaps the last cards / legal sections. */
+  padding-bottom: var(--footer-height);
+}
+
+a {
+  color: var(--text-link);
+  text-decoration: none;
+}
+
+a:hover {
+  text-decoration: underline;
+}
+
+button {
+  font-family: inherit;
+  cursor: pointer;
+  border: none;
+  background: none;
+  color: inherit;
+}
+
+/* Keyboard focus ring. `:focus-visible` fires only for keyboard / AT
+   navigation (not mouse clicks), so every focusable control — the ~20 per-card
+   buttons, the tab buttons, links, and text fields — gets a consistent, visible
+   position without intruding on pointer users. Restores what the removed
+   `outline: none` declarations used to suppress with no fallback. */
+:focus-visible {
+  outline: 2px solid var(--accent);
+  outline-offset: 2px;
+}
+
+/* Visually hidden, but announced by assistive tech. Used for structural
+   headings that keep the document outline gap-free without adding visible
+   chrome (e.g. the feed section's h2 between the h1 and the card h3s). */
+.sr-only {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip: rect(0, 0, 0, 0);
+  white-space: nowrap;
+  border: 0;
+}
+
+img {
+  max-width: 100%;
+  height: auto;
+  display: block;
+}
+
+/* ============================================================
+   HEADER
+   ============================================================ */
+
+.header {
+  position: sticky;
+  top: 0;
+  z-index: 100;
+  background: var(--bg-header);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  border-bottom: 1px solid var(--border);
+  height: var(--header-height);
+}
+
+.header__inner {
+  max-width: var(--max-width);
+  margin: 0 auto;
+  padding: 0 var(--sp-4);
+  height: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--sp-3);
+}
+
+
+
+.header__logo {
+  display: flex;
+  align-items: center;
+  gap: var(--sp-2);
+  flex: 1;
+}
+
+.header__logo-icon {
+  font-size: var(--fs-md);
+  font-weight: var(--fw-bold);
+  color: var(--accent);
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+}
+
+.header__title {
+  font-size: var(--fs-md);
+  font-weight: var(--fw-bold);
+  color: var(--text-primary);
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+}
+
+.header__auth {
+  flex-shrink: 0;
+}
+
+/* Signed-out: our own pill opens the sign-in overlay (the official Google
+   button renders inside the overlay, not in the header). */
+.header__signin-btn {
+  padding: var(--sp-1) var(--sp-4);
+  font-size: var(--fs-sm);
+  font-weight: var(--fw-semibold);
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+  color: var(--bg-canvas);
+  background: var(--accent);
+  border-radius: var(--radius-lg);
+  transition: background var(--transition-fast);
+}
+
+.header__signin-btn:hover {
+  background: var(--accent-hover);
+}
+
+/* Signed-in user display */
+.header__user {
+  display: flex;
+  align-items: center;
+  gap: var(--sp-2);
+}
+
+/* Avatar + name are one button — the door to Email preferences. */
+.header__user-info {
+  display: flex;
+  align-items: center;
+  gap: var(--sp-2);
+  padding: 2px;
+  border-radius: var(--radius-lg);
+  transition: background var(--transition-fast);
+}
+
+.header__user-info:hover {
+  background: var(--bg-surface-hover);
+}
+
+.header__user-avatar {
+  width: 28px;
+  height: 28px;
+  border-radius: var(--radius-full);
+  border: 2px solid var(--accent);
+}
+
+.header__user-name {
+  font-size: var(--fs-sm);
+  color: var(--text-secondary);
+  display: none;
+}
+
+.header__signout-btn {
+  font-size: var(--fs-xs);
+  color: var(--text-muted);
+  padding: var(--sp-1) var(--sp-2);
+  border-radius: var(--radius-sm);
+  transition: color var(--transition-fast);
+}
+
+.header__signout-btn:hover {
+  color: var(--text-primary);
+}
+
+.header__title-link {
+  text-decoration: none;
+  color: inherit;
+}
+
+.header__title-link:hover {
+  text-decoration: none;
+}
+
+/* ============================================================
+   FOOTER
+   Fixed to the viewport bottom, mirroring the sticky header.
+   Holds the site nav (moved out of the header) and a copyright
+   line whose year is set at runtime. Sits below the fullscreen
+   overlay (z-index 300) so it hides during fullscreen playback.
+   ============================================================ */
+
+.footer {
+  position: fixed;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  z-index: 100;
+  background: var(--bg-header);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  border-top: 1px solid var(--border);
+  height: var(--footer-height);
+}
+
+.footer__inner {
+  max-width: var(--max-width);
+  margin: 0 auto;
+  padding: 0 var(--sp-4);
+  height: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--sp-3);
+}
+
+.footer__nav {
+  display: flex;
+  align-items: center;
+  gap: var(--sp-4);
+  overflow-x: auto;
+  scrollbar-width: none;
+  -webkit-overflow-scrolling: touch;
+}
+
+.footer__nav::-webkit-scrollbar {
+  display: none;
+}
+
+.footer__nav-link {
+  flex-shrink: 0;
+  white-space: nowrap;
+  font-size: var(--fs-sm);
+  color: var(--text-muted);
+  text-decoration: none;
+  transition: color var(--transition-fast);
+}
+
+.footer__nav-link:hover {
+  color: var(--text-secondary);
+  text-decoration: none;
+}
+
+.footer__nav-link--active {
+  color: var(--text-secondary);
+}
+
+/* Copyright + version, right-aligned to mirror the nav */
+.footer__meta {
+  display: flex;
+  align-items: center;
+  gap: var(--sp-3);
+  min-width: 0;
+}
+
+.footer__copyright {
+  font-size: var(--fs-xs);
+  color: var(--text-muted);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+/* Version badge — filled from CONFIG.APP_VERSION at boot */
+.footer__version {
+  flex-shrink: 0;
+  font-size: var(--fs-xs);
+  color: var(--text-muted);
+  opacity: 0.7;
+}
+
+/* Phones: three nav links + "© 2026 How You Watch" + the version badge are
+   ~390px at the default spacing, so the copyright got ellipsized. Tighten the
+   spacing so the full row fits from ~360px up; on the narrowest phones drop
+   the version badge (it's also logged to the console at boot) rather than
+   cut the copyright. */
+@media (max-width: 480px) {
+  .footer__inner {
+    padding: 0 var(--sp-3);
+    gap: var(--sp-2);
+  }
+
+  .footer__nav {
+    gap: var(--sp-3);
+  }
+
+  .footer__meta {
+    gap: var(--sp-2);
+  }
+}
+
+@media (max-width: 360px) {
+  .footer__version {
+    display: none;
+  }
+}
+
+/* ============================================================
+   MAIN LAYOUT
+   ============================================================ */
+
+.main {
+  max-width: var(--max-width);
+  margin: 0 auto;
+  padding: var(--sp-3) 0;
+  /* Viewport minus both fixed bars keeps a short page from scrolling; the
+     footer's own space comes from body's padding-bottom. */
+  min-height: calc(100vh - var(--header-height) - var(--footer-height));
+}
+
+
+
+/* ============================================================
+   VIEW TABS (Latest / Top This Week)
+   ============================================================ */
+
+/* Five tabs no longer fit a phone row — the row scrolls horizontally
+   (scrollbar hidden) instead of wrapping or shrinking the labels.
+   overflow-y is pinned to hidden: with overflow-x:auto alone the spec
+   computes overflow-y to auto too, and the active underline's 1px
+   protrusion made the whole row vertically draggable on iOS (labels
+   rubber-banded half out of view). */
+.feed-tabs {
+  display: flex;
+  gap: var(--sp-1);
+  border-bottom: 1px solid var(--border);
+  overflow-x: auto;
+  overflow-y: hidden;
+  scrollbar-width: none;
+}
+
+.feed-tabs::-webkit-scrollbar {
+  display: none;
+}
+
+.feed-tab {
+  position: relative;
+  flex-shrink: 0;
+  padding: var(--sp-3) var(--sp-4);
+  font-size: var(--fs-base);
+  font-weight: var(--fw-semibold);
+  color: var(--text-secondary);
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  background: transparent;
+  border: none;
+  cursor: pointer;
+  transition: color var(--transition-fast);
+}
+
+.feed-tab:hover {
+  color: var(--text-primary);
+}
+
+.feed-tab--active {
+  color: var(--text-primary);
+}
+
+/* Accent underline under the active tab. bottom: 0, not -1px — the row is
+   a scroll container now, so anything past the content edge would either
+   be clipped or (worse) become scrollable vertical overflow. */
+.feed-tab--active::after {
+  content: '';
+  position: absolute;
+  left: var(--sp-4);
+  right: var(--sp-4);
+  bottom: 0;
+  height: 2px;
+  background: var(--accent);
+  border-radius: 2px 2px 0 0;
+}
+
+/* ============================================================
+   CONTENT-TYPE FILTER (Videos / Articles / Shorts chips)
+   Pure CSS visibility: one class per hidden type on the feed
+   container, cards carry data-media-type — nothing re-renders.
+   ============================================================ */
+
+.feed--hide-video [data-media-type="video"]:not(.media-card--fullscreen),
+.feed--hide-article [data-media-type="article"]:not(.media-card--fullscreen),
+.feed--hide-short [data-media-type="short"]:not(.media-card--fullscreen) {
+  display: none;
+}
+
+/* ============================================================
+   SEARCH & FILTER CONTROLS
+   ============================================================ */
+
+/* No horizontal padding — aligns with the full-bleed feed cards */
+.feed-controls {
+  padding: var(--sp-2) 0 0;
+}
+
+.feed-controls__search {
+  width: 100%;
+  padding: var(--sp-2) var(--sp-3);
+  font-family: var(--font-family);
+  font-size: var(--fs-base);
+  color: var(--text-primary);
+  background: var(--bg-input);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-md);
+  transition: border-color var(--transition-fast);
+}
+
+.feed-controls__search:focus {
+  border-color: var(--accent);
+}
+
+.feed-controls__search::placeholder {
+  color: var(--text-muted);
+}
+
+.feed-controls__chips {
+  display: flex;
+  gap: var(--sp-2);
+  margin-top: var(--sp-3);
+  overflow-x: auto;
+  scrollbar-width: none;
+  padding-bottom: var(--sp-1);
+}
+
+.feed-controls__chips::-webkit-scrollbar {
+  display: none;
+}
+
+.chip {
+  flex-shrink: 0;
+  padding: var(--sp-1) var(--sp-3);
+  font-size: var(--fs-sm);
+  font-weight: var(--fw-medium);
+  color: var(--text-secondary);
+  background: var(--bg-surface);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-lg);
+  white-space: nowrap;
+  transition: all var(--transition-fast);
+}
+
+.chip:hover {
+  color: var(--text-primary);
+  border-color: var(--text-secondary);
+}
+
+.chip--active {
+  color: var(--bg-canvas);
+  background: var(--accent);
+  border-color: var(--accent);
+}
+
+.chip--active:hover {
+  color: var(--bg-canvas);
+  background: var(--accent-hover);
+  border-color: var(--accent-hover);
+}
+
+/* ============================================================
+   VIDEO CARD — Grid Layout (thumbnail left, info right)
+   ============================================================ */
+
+/* Nebula-style grid: video/article tiles, up to three across on desktop.
+   Responsive column count is set at the tablet/desktop breakpoints below;
+   base (mobile) is a single column. align-items:start keeps each tile at its
+   natural height — a card whose comments are expanded grows on its own without
+   stretching the rest of its row. */
+.feed {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: var(--sp-4);
+  padding: var(--sp-2) 0;
+  align-items: start;
+}
+
+.media-card {
+  background: var(--bg-surface);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-md);
+  overflow: hidden;
+  transition: border-color var(--transition-normal), opacity 0.3s ease, transform 0.3s ease;
+  /* Post-fullscreen scroll restore clears the sticky header via the
+     universal scroll-margin-top rule in RESET & BASE. */
+}
+
+.media-card:hover {
+  border-color: var(--text-muted);
+}
+
+.media-card--entering {
+  opacity: 0;
+  transform: translateY(12px);
+}
+
+/* Batch entrance (appendCards): the card is inserted at its final layout
+   position immediately — only opacity/transform animate (compositor-only,
+   zero layout shift). The stagger lives in --enter-delay per card;
+   fill-mode "both" keeps the card invisible until its turn. */
+.media-card--enter {
+  animation: card-enter 0.3s ease both;
+  animation-delay: var(--enter-delay, 0ms);
+}
+
+.media-card--enter-short {
+  animation: card-enter-short 0.3s ease both;
+  animation-delay: var(--enter-delay, 0ms);
+}
+
+@keyframes card-enter {
+  from {
+    opacity: 0;
+    transform: translateY(12px);
+  }
+}
+
+@keyframes card-enter-short {
+  from {
+    opacity: 0;
+    transform: translateY(16px) scale(0.97);
+  }
+}
+
+.media-card--leaving {
+  opacity: 0;
+  transform: translateY(-8px);
+  pointer-events: none;
+}
+
+/* Vertical tile: thumbnail on top, content below (Nebula layout). Was a
+   horizontal 280px|content row; stacking makes the card tile cleanly in the
+   feed grid. */
+.media-card__grid {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 0;
+}
+
+.media-card__embed {
+  position: relative;
+  width: 100%;
+  aspect-ratio: 16 / 9;
+  background: #000;
+  overflow: hidden;
+}
+
+.media-card__embed iframe {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  border: none;
+}
+
+.media-card__content {
+  padding: var(--sp-3) var(--sp-4);
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  min-width: 0;
+}
+
+.media-card__title {
+  font-size: var(--fs-md);
+  font-weight: var(--fw-medium);
+  color: var(--text-primary);
+  line-height: var(--lh-tight);
+  margin-bottom: var(--sp-2);
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  line-clamp: 2;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+  /* Reserve two lines so a one-line title still occupies the same height as a
+     two-line one — keeps tile bottoms aligned across a grid row. */
+  min-height: calc(2 * var(--lh-tight) * 1em);
+}
+
+.media-card__title a {
+  color: inherit;
+  text-decoration: none;
+  transition: color var(--transition-fast);
+}
+
+.media-card__title a:hover {
+  color: var(--accent);
+}
+
+.media-card__meta {
+  display: flex;
+  align-items: center;
+  gap: var(--sp-2);
+  font-size: var(--fs-sm);
+  color: var(--text-secondary);
+  margin-bottom: var(--sp-2);
+}
+
+.media-card__channel {
+  font-weight: var(--fw-medium);
+  /* Let a long channel name shrink and ellipsize instead of pushing the
+     time/views onto a second row (min-width:0 overrides flex min-content) */
+  min-width: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+/* Flat channel-type icon (play lozenge / newspaper) inline with the name */
+.media-card__channel .icon {
+  vertical-align: -2.5px;
+}
+
+/* The fixed-width meta parts never wrap or shrink */
+.media-card__time,
+.media-card__views {
+  white-space: nowrap;
+  flex-shrink: 0;
+}
+
+/* Star-a-creator button, inline with the channel name.
+   Negative margin keeps the visual footprint tight while the padding
+   gives it a ~30px tap target. */
+.media-card__star {
+  flex-shrink: 0;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-width: 30px;
+  min-height: 30px;
+  margin: calc(-1 * var(--sp-2)) calc(-1 * var(--sp-1));
+  font-size: var(--fs-base);
+  line-height: 1;
+  color: var(--text-muted);
+  transition: color var(--transition-fast), transform var(--transition-fast);
+}
+
+.media-card__star:hover {
+  color: var(--accent);
+  transform: scale(1.15);
+}
+
+.media-card__star--active {
+  color: var(--accent);
+}
+
+.media-card__separator {
+  color: var(--text-muted);
+}
+
+/* ============================================================
+   CHANNELS TAB — 3-up grid of favouritable creator cards.
+   Reuses .media-card__star for the favourite button, so these
+   star overrides must sit AFTER the base star rules to win.
+   ============================================================ */
+
+.feed.feed--channels {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: var(--sp-3);
+}
+
+.channel-card {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+  gap: var(--sp-3);
+  padding: var(--sp-4) var(--sp-3);
+  background: var(--bg-surface);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-md);
+  transition: border-color var(--transition-normal);
+}
+
+.channel-card:hover {
+  border-color: var(--text-muted);
+}
+
+.channel-card__figure {
+  position: relative;
+  width: 88px;
+  height: 88px;
+  border-radius: var(--radius-full);
+  overflow: hidden;
+  display: grid;
+  place-items: center;
+  background: var(--accent-dim);
+  text-decoration: none;
+}
+
+/* Fallback tile, revealed when there's no avatar or the image fails to load. */
+.channel-card__monogram {
+  font-size: var(--fs-xl);
+  font-weight: var(--fw-semibold);
+  color: var(--accent);
+  line-height: 1;
+}
+
+.channel-card__avatar {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  background: var(--bg-surface);
+}
+
+.channel-card__name {
+  font-size: var(--fs-md);
+  font-weight: var(--fw-medium);
+  color: var(--text-primary);
+  text-decoration: none;
+  line-height: var(--lh-tight);
+}
+
+.channel-card__name:hover {
+  color: var(--accent);
+}
+
+/* Platform mark — pinned to the card's top-left corner as the exact mirror
+   of the favourite star (same 30px centered box, same corner inset): the
+   YouTube play lozenge or the flat newspaper icon for article sites (both
+   inline SVGs carrying their own size). Decorative (aria-hidden); the
+   figure link's aria-label carries the platform for screen readers. */
+.channel-card__platform {
+  position: absolute;
+  top: var(--sp-2);
+  left: var(--sp-2);
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-width: 30px;
+  min-height: 30px;
+  line-height: 1;
+}
+
+.channel-card__platform svg {
+  display: block;
+}
+
+/* The newspaper mark draws in currentColor — grey to match the article
+   avatar ring, next to the always-red YouTube lozenge. */
+.channel-card__platform--article {
+  color: var(--text-secondary);
+}
+
+/* Avatar ring — red for YouTube channels, hairline grey for article sites.
+   Drawn as a stacked box-shadow (surface-colored gap, then the ring) so it
+   hugs the circular figure without shifting the layout. */
+.channel-card[data-platform="youtube"] .channel-card__figure {
+  box-shadow: 0 0 0 3px var(--bg-surface), 0 0 0 5px #f00;
+}
+
+.channel-card[data-platform="article"] .channel-card__figure {
+  box-shadow: 0 0 0 3px var(--bg-surface), 0 0 0 5px var(--text-muted);
+}
+
+/* Platform filter (chips above the Channels grid): cards carry
+   data-platform, the container carries one feed--hide-platform-<value>
+   class per hidden platform — visibility is pure CSS, no re-render.
+   Scoped to .feed--channels so the classes are inert on video views. */
+.feed--channels.feed--hide-platform-youtube .channel-card[data-platform="youtube"],
+.feed--channels.feed--hide-platform-article .channel-card[data-platform="article"] {
+  display: none;
+}
+
+/* Favourite star, pinned to the card's top-right corner. Resets the negative
+   inline-meta offsets .media-card__star carries and enlarges the tap target. */
+.channel-card__star {
+  position: absolute;
+  top: var(--sp-2);
+  right: var(--sp-2);
+  margin: 0;
+  font-size: var(--fs-lg);
+}
+
+@media (max-width: 640px) {
+  .feed.feed--channels {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}
+
+/* Stack on narrow mobile */
+@media (max-width: 540px) {
+  .media-card__grid {
+    grid-template-columns: 1fr;
+  }
+
+  /* Small gutter so cards and controls don't touch the screen edge */
+  .main {
+    padding: var(--sp-3) var(--sp-2);
+  }
+
+  /* 16px inputs stop iOS Safari from auto-zooming on focus */
+  .feed-controls__search,
+  .media-card__textarea,
+  .reply-form__textarea {
+    font-size: 1rem;
+  }
+
+  /* Bigger touch targets */
+  .chip {
+    padding: var(--sp-2) var(--sp-4);
+  }
+
+  /* Three tabs share one narrow row */
+  .feed-tab {
+    padding: var(--sp-3) var(--sp-2);
+    font-size: var(--fs-sm);
+  }
+
+  .feed-tab--active::after {
+    left: var(--sp-2);
+    right: var(--sp-2);
+  }
+
+  .comment__reply-btn {
+    padding: var(--sp-2) var(--sp-3);
+  }
+}
+
+/* ============================================================
+   INLINE COMMENTS SECTION (per video card)
+   ============================================================ */
+
+.media-card__comments-section {
+  border-top: 1px solid var(--separator);
+}
+
+/* Footer row holding the upvote button + comments toggle */
+.media-card__actionbar {
+  display: flex;
+  align-items: center;
+  gap: var(--sp-1);
+}
+
+/* Upvote button */
+.media-card__vote {
+  display: flex;
+  align-items: center;
+  gap: var(--sp-1);
+  padding: var(--sp-3) var(--sp-3);
+  font-size: var(--fs-sm);
+  font-weight: var(--fw-semibold);
+  color: var(--text-secondary);
+  background: transparent;
+  border: none;
+  cursor: pointer;
+  transition: color var(--transition-fast), background var(--transition-fast);
+}
+
+.media-card__vote:hover {
+  color: var(--accent);
+  background: var(--accent-dim);
+}
+
+.media-card__vote-icon {
+  font-size: var(--fs-base);
+  line-height: 1;
+  transition: transform var(--transition-fast);
+}
+
+.media-card__vote--active {
+  color: var(--accent);
+}
+
+.media-card__vote--active .media-card__vote-icon {
+  transform: translateY(-1px) scale(1.1);
+}
+
+.media-card__vote-count {
+  min-width: 1ch;
+  font-variant-numeric: tabular-nums;
+}
+
+.media-card__comments-toggle {
+  display: flex;
+  align-items: center;
+  gap: var(--sp-1);
+  width: 100%;
+  padding: var(--sp-3) var(--sp-4);
+  font-size: var(--fs-sm);
+  font-weight: var(--fw-medium);
+  color: var(--text-secondary);
+  background: transparent;
+  border: none;
+  cursor: pointer;
+  transition: color var(--transition-fast), background var(--transition-fast);
+}
+
+.media-card__comments-toggle:hover {
+  color: var(--accent);
+  background: var(--accent-dim);
+}
+
+/* In the footer row the toggle takes the remaining width, not 100% */
+.media-card__actionbar .media-card__comments-toggle {
+  width: auto;
+  flex: 1;
+  justify-content: flex-start;
+}
+
+/* Bookmark, share, and expand-to-fullscreen buttons, bottom right of every card */
+.media-card__expand,
+.media-card__share,
+.media-card__bookmark {
+  display: flex;
+  align-items: center;
+  padding: var(--sp-3) var(--sp-4);
+  font-size: var(--fs-base);
+  line-height: 1;
+  color: var(--text-secondary);
+  transition: color var(--transition-fast), background var(--transition-fast);
+}
+
+.media-card__expand:hover,
+.media-card__share:hover,
+.media-card__bookmark:hover {
+  color: var(--accent);
+  background: var(--accent-dim);
+}
+
+/* Saved state: the outline bookmark fills with the accent — the same
+   color-flip language as the ☆ → ★ favourite star. */
+.media-card__bookmark--active {
+  color: var(--accent);
+}
+
+.media-card__bookmark--active .icon--bookmark path {
+  fill: currentColor;
+}
+
+/* Mount point for a deep-linked (?v=) card that isn't in the feed. Shares
+   the .feed grid styling for the card itself, but must contribute zero
+   height while unused or the feed gets phantom top spacing. */
+#deeplink-container:empty {
+  display: none;
+}
+
+/* ============================================================
+   FULLSCREEN MODE
+   The expanded card becomes a fixed overlay covering the viewport;
+   everything else stays put underneath (scroll position intact).
+   ============================================================ */
+
+body.fullscreen-mode {
+  overflow: hidden;
+}
+
+.media-card--fullscreen {
+  position: fixed;
+  inset: 0;
+  z-index: 300;
+  border: none;
+  border-radius: 0;
+  overflow-y: auto;
+  background: var(--bg-canvas);
+  animation: fullscreenIn 0.25s ease;
+  padding: 0 var(--sp-4) var(--sp-8);
+}
+
+/* Opacity only — a transform here would shrink the overlay mid-animation
+   and turn the card into the containing block for the fixed exit button */
+@keyframes fullscreenIn {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+
+/* Single column: big player on top, meta below, comments underneath */
+.media-card--fullscreen .media-card__grid {
+  grid-template-columns: 1fr;
+  max-width: 960px;
+  margin: 0 auto;
+}
+
+.media-card--fullscreen .media-card__embed,
+.media-card--fullscreen .article-card__embed {
+  margin-top: var(--sp-4);
+  border-radius: var(--radius-md);
+}
+
+.media-card--fullscreen .media-card__content {
+  padding: var(--sp-4) 0;
+}
+
+/* Align the comments with the title at the overlay's edge (the card's
+   own padding already provides the horizontal inset) */
+.media-card--fullscreen .media-card__comments-body {
+  padding: 0 0 var(--sp-4);
+}
+
+.media-card--fullscreen .media-card__title {
+  font-size: var(--fs-lg);
+  -webkit-line-clamp: unset;
+  line-clamp: unset;
+}
+
+.media-card--fullscreen .media-card__comments-section {
+  max-width: 960px;
+  margin: 0 auto;
+}
+
+/* The expand button flips to an exit control, pinned to the top-right
+   corner of the 960px content column — not the viewport edge, or on wide
+   screens it strands out in the black margin, disconnected from the card.
+   right = distance from viewport edge to the column's right edge
+   (50% - 480px), inset slightly so it sits just inside the corner;
+   clamped to a gutter once the column fills the viewport. */
+.media-card--fullscreen .media-card__expand {
+  position: fixed;
+  top: 50px;
+  right: max(var(--sp-4), calc(50% - 480px + var(--sp-4)));
+  z-index: 310;
+  font-size: calc(var(--fs-base) * 1.1); /* X glyph 10% larger for a clearer target */
+  background: var(--bg-surface);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-full);
+  padding: var(--sp-2);
+}
+
+.media-card--fullscreen .media-card__expand:hover {
+  color: var(--accent);
+  border-color: var(--accent);
+}
+
+/* On narrow screens the player spans the full width, so give it clearance
+   below the fixed exit button (top --sp-8 + ~32px height + breathing room).
+   Placed after the base fullscreen rules — same specificity, so source
+   order decides. */
+@media (max-width: 540px) {
+  .media-card--fullscreen .media-card__embed,
+  .media-card--fullscreen .article-card__embed {
+    margin-top: 72px;
+  }
+}
+
+.media-card__comments-body {
+  padding: 0 var(--sp-4) var(--sp-4);
+}
+
+.media-card__comments-list {
+  margin-bottom: var(--sp-3);
+  transition: opacity 0.3s ease;
+}
+
+.media-card__comments-list.is-updating {
+  opacity: 0.3;
+  pointer-events: none;
+}
+
+.media-card__comment-input {
+  margin-top: var(--sp-2);
+}
+
+.media-card__auth-prompt {
+  padding: var(--sp-3);
+  text-align: center;
+  color: var(--text-secondary);
+  font-size: var(--fs-sm);
+  background: var(--bg-comment);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-md);
+}
+
+.media-card__auth-prompt-btn {
+  display: flex;
+  justify-content: center;
+  margin-top: var(--sp-2);
+}
+
+.media-card__comment-form {
+  background: var(--bg-comment);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-md);
+  overflow: hidden;
+}
+
+.media-card__textarea {
+  width: 100%;
+  padding: var(--sp-3);
+  font-family: var(--font-family);
+  font-size: var(--fs-sm);
+  color: var(--text-primary);
+  background: transparent;
+  border: none;
+  resize: vertical;
+  min-height: 48px;
+}
+
+.media-card__textarea::placeholder {
+  color: var(--text-muted);
+}
+
+.media-card__comment-actions {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: var(--sp-2) var(--sp-3);
+  border-top: 1px solid var(--separator);
+}
+
+.media-card__charcount {
+  font-size: var(--fs-xs);
+  color: var(--text-muted);
+}
+
+.comments-empty {
+  text-align: center;
+  color: var(--text-muted);
+  font-size: var(--fs-sm);
+  padding: var(--sp-4);
+}
+
+.comments-loading-inline {
+  text-align: center;
+  padding: var(--sp-4);
+}
+
+
+
+/* Comment Thread */
+.comment-thread {
+  margin-bottom: var(--sp-4);
+}
+
+.comment-thread__replies {
+  padding-left: var(--sp-5);
+  border-left: 2px solid var(--separator);
+  margin-left: var(--sp-4);
+  margin-top: var(--sp-2);
+}
+
+.comment {
+  display: flex;
+  gap: var(--sp-3);
+  padding: var(--sp-3) 0;
+  transition: opacity var(--transition-normal);
+}
+
+.comment--optimistic {
+  opacity: 0.6;
+}
+
+.comment--depth-1 {
+  padding: var(--sp-2) 0;
+}
+
+.comment__avatar-img {
+  width: 28px;
+  height: 28px;
+  border-radius: var(--radius-full);
+  flex-shrink: 0;
+}
+
+.comment--depth-1 .comment__avatar-img {
+  width: 22px;
+  height: 22px;
+}
+
+.comment__body {
+  flex: 1;
+  min-width: 0;
+}
+
+.comment__header {
+  display: flex;
+  align-items: center;
+  gap: var(--sp-2);
+  font-size: var(--fs-sm);
+  margin-bottom: var(--sp-1);
+}
+
+.comment__author {
+  font-weight: var(--fw-medium);
+  color: var(--text-primary);
+}
+
+.comment__separator {
+  color: var(--text-muted);
+}
+
+.comment__time {
+  color: var(--text-muted);
+}
+
+.comment__text {
+  font-size: var(--fs-base);
+  color: var(--text-primary);
+  line-height: var(--lh-normal);
+  word-wrap: break-word;
+}
+
+.comment__actions {
+  margin-top: var(--sp-2);
+}
+
+.comment__reply-btn {
+  font-size: var(--fs-xs);
+  font-weight: var(--fw-semibold);
+  color: var(--text-secondary);
+  padding: var(--sp-1) var(--sp-2);
+  border-radius: var(--radius-sm);
+  transition: color var(--transition-fast);
+}
+
+.comment__reply-btn:hover {
+  color: var(--accent);
+}
+
+/* Reply Form (inline) */
+.reply-form {
+  margin-top: var(--sp-2);
+  margin-left: calc(28px + var(--sp-3)); /* avatar width + gap */
+}
+
+.reply-form__textarea {
+  width: 100%;
+  padding: var(--sp-2) var(--sp-3);
+  font-family: var(--font-family);
+  font-size: var(--fs-sm);
+  color: var(--text-primary);
+  background: var(--bg-input);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-sm);
+  resize: none;
+  min-height: 48px;
+}
+
+.reply-form__textarea:focus {
+  border-color: var(--accent);
+}
+
+.reply-form__actions {
+  display: flex;
+  justify-content: flex-end;
+  gap: var(--sp-2);
+  margin-top: var(--sp-2);
+}
+
+/* ============================================================
+   BUTTONS
+   ============================================================ */
+
+.btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: var(--sp-2) var(--sp-4);
+  font-size: var(--fs-sm);
+  font-weight: var(--fw-medium);
+  text-transform: uppercase;
+  letter-spacing: 0.03em;
+  border-radius: var(--radius-md);
+  transition: all var(--transition-fast);
+  border: 2px solid transparent;
+  cursor: pointer;
+}
+
+/* Solid accent CTA — fill flips to a lighter neon on hover */
+.btn--primary {
+  background: var(--accent);
+  border-color: var(--accent);
+  color: var(--bg-canvas);
+}
+
+.btn--primary:hover {
+  background: var(--accent-hover);
+  border-color: var(--accent-hover);
+}
+
+.btn--primary:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+/* Outlined secondary — white border on black, inverts to a white fill on
+   hover. Keeps the neon rare (accent stays on the one primary action). */
+.btn--ghost {
+  background: transparent;
+  color: var(--text-primary);
+  border-color: var(--border);
+}
+
+.btn--ghost:hover {
+  background: var(--text-primary);
+  color: var(--bg-canvas);
+  border-color: var(--text-primary);
+}
+
+.btn--sm {
+  padding: var(--sp-1) var(--sp-3);
+  font-size: var(--fs-xs);
+}
+
+/* ============================================================
+   LOADING SKELETONS
+   ============================================================ */
+
+/* Mirrors the real feed grid so the loading state tiles exactly like the cards
+   it stands in for (responsive columns are set at the breakpoints alongside
+   .feed). */
+.feed-skeleton {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: var(--sp-4);
+  padding: var(--sp-2) 0;
+  align-items: start;
+}
+
+.skeleton-card {
+  background: var(--bg-surface);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-md);
+  overflow: hidden;
+}
+
+/* Vertical tile: shimmer thumbnail on top, lines below — matches
+   .media-card__grid. */
+.skeleton-card__grid {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 0;
+}
+
+.skeleton-embed {
+  aspect-ratio: 16 / 9;
+  background: linear-gradient(
+    90deg,
+    var(--bg-surface) 25%,
+    var(--bg-surface-hover) 50%,
+    var(--bg-surface) 75%
+  );
+  background-size: 200% 100%;
+  animation: shimmer 1.5s ease-in-out infinite;
+}
+
+.skeleton-content {
+  padding: var(--sp-3) var(--sp-4);
+  display: flex;
+  flex-direction: column;
+}
+
+.skeleton-line {
+  height: 14px;
+  border-radius: var(--radius-sm);
+  margin-bottom: var(--sp-3);
+  background: linear-gradient(
+    90deg,
+    var(--bg-surface-hover) 25%,
+    var(--separator) 50%,
+    var(--bg-surface-hover) 75%
+  );
+  background-size: 200% 100%;
+  animation: shimmer 1.5s ease-in-out infinite;
+}
+
+.skeleton-line--title {
+  width: 80%;
+}
+
+.skeleton-line--meta {
+  width: 50%;
+  height: 12px;
+}
+
+/* Hints at the vote/comments/expand action bar below each tile's content. */
+.skeleton-line--actions {
+  width: 40%;
+  height: 12px;
+  margin-top: var(--sp-1);
+  margin-bottom: 0;
+}
+
+@keyframes shimmer {
+  0% { background-position: 200% 0; }
+  100% { background-position: -200% 0; }
+}
+
+/* ============================================================
+   SPINNER
+   ============================================================ */
+
+.spinner {
+  width: 24px;
+  height: 24px;
+  border: 3px solid var(--border);
+  border-top-color: var(--accent);
+  border-radius: var(--radius-full);
+  animation: spin 0.8s linear infinite;
+  margin: 0 auto;
+}
+
+@keyframes spin {
+  to { transform: rotate(360deg); }
+}
+
+
+
+/* ============================================================
+   SIGN-IN / EMAIL-CONSENT OVERLAY
+   One dialog, three faces (js/auth-overlay.js): Google sign-in,
+   the first-sign-in marketing-email question, Email preferences.
+   ============================================================ */
+
+.auth-overlay {
+  position: fixed;
+  inset: 0;
+  z-index: 350; /* above the fullscreen overlay (300), below toasts (400) */
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: var(--sp-4);
+}
+
+.auth-overlay[hidden] {
+  display: none;
+}
+
+.auth-overlay__backdrop {
+  position: absolute;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.72);
+}
+
+.auth-overlay__dialog {
+  position: relative;
+  width: min(92vw, 400px);
+  padding: var(--sp-6);
+  background: var(--bg-surface);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-md);
+  box-shadow: 0 12px 40px rgba(0, 0, 0, 0.6);
+  outline: none;
+}
+
+.auth-overlay__close {
+  position: absolute;
+  top: var(--sp-2);
+  right: var(--sp-2);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-width: 30px;
+  min-height: 30px;
+  font-size: var(--fs-base);
+  line-height: 1;
+  color: var(--text-secondary);
+  border-radius: var(--radius-sm);
+  transition: color var(--transition-fast);
+}
+
+.auth-overlay__close:hover {
+  color: var(--text-primary);
+}
+
+.auth-overlay__title {
+  font-size: var(--fs-lg);
+  font-weight: var(--fw-bold);
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  margin-bottom: var(--sp-3);
+}
+
+.auth-overlay__copy {
+  font-size: var(--fs-base);
+  color: var(--text-secondary);
+  margin-bottom: var(--sp-4);
+}
+
+.auth-overlay__copy--muted {
+  color: var(--text-muted);
+}
+
+.auth-overlay__note {
+  font-size: var(--fs-xs);
+  color: var(--text-muted);
+  margin-top: var(--sp-3);
+}
+
+.auth-overlay__actions {
+  display: flex;
+  gap: var(--sp-3);
+  justify-content: flex-end;
+}
+
+.auth-overlay__gsi {
+  display: flex;
+  justify-content: center;
+  padding: var(--sp-4) 0 var(--sp-2);
+  min-height: 44px;
+}
+
+.auth-overlay__pending {
+  display: flex;
+  justify-content: center;
+  padding: var(--sp-4) 0;
+}
+
+.btn--ghost:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+/* ============================================================
+   FEEDBACK — floating button + dialog (js/feedback.js)
+   The button mirrors the channel logo: a volt disc carrying a black
+   mark with a burnt-orange outline (the one place --orange is used
+   outside the wordmark). Fixed bottom-right, clear of the footer.
+   ============================================================ */
+
+.feedback-fab {
+  position: fixed;
+  right: var(--sp-4);
+  bottom: calc(var(--footer-height) + var(--sp-4));
+  z-index: 150; /* above the footer (100); under the cookie banner (200),
+                   the fullscreen overlay (300) and every dialog */
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 56px;
+  height: 56px;
+  border-radius: 50%;
+  background: var(--accent);
+  color: var(--bg-canvas);
+  box-shadow: 0 6px 20px rgba(0, 0, 0, 0.55);
+  transition: background var(--transition-fast), transform var(--transition-fast);
+}
+
+.feedback-fab[hidden] {
+  display: none; /* signed-out: no button (the dialog needs a sender) */
+}
+
+.feedback-fab:hover {
+  background: var(--accent-hover);
+  transform: translateY(-1px);
+}
+
+.feedback-fab:focus-visible {
+  outline: 2px solid var(--text-primary);
+  outline-offset: 3px;
+}
+
+.feedback-fab svg {
+  width: 28px;
+  height: 28px;
+}
+
+/* The logo treatment: black fill, burnt-orange outline, volt cut-outs */
+.feedback-fab__bubble {
+  fill: var(--bg-canvas);
+  stroke: var(--orange);
+  stroke-width: 1.6;
+  stroke-linejoin: round;
+}
+
+.feedback-fab__dot {
+  fill: var(--accent);
+}
+
+.feedback-overlay {
+  position: fixed;
+  inset: 0;
+  z-index: 350; /* same layer as the sign-in overlay: above fullscreen (300), below toasts (400) */
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: var(--sp-4);
+}
+
+.feedback-overlay[hidden] {
+  display: none;
+}
+
+.feedback-overlay__backdrop {
+  position: absolute;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.72);
+}
+
+.feedback-overlay__dialog {
+  position: relative;
+  width: min(92vw, 440px);
+  padding: var(--sp-6);
+  background: var(--bg-surface);
+  border: 1px solid var(--border);
+  border-top: 3px solid var(--accent);
+  border-radius: var(--radius-md);
+  box-shadow: 0 12px 40px rgba(0, 0, 0, 0.6);
+  outline: none;
+}
+
+.feedback-overlay__close {
+  position: absolute;
+  top: var(--sp-2);
+  right: var(--sp-2);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-width: 30px;
+  min-height: 30px;
+  font-size: var(--fs-base);
+  line-height: 1;
+  color: var(--text-secondary);
+  border-radius: var(--radius-sm);
+  transition: color var(--transition-fast);
+}
+
+.feedback-overlay__close:hover {
+  color: var(--text-primary);
+}
+
+.feedback-overlay__title {
+  font-size: var(--fs-lg);
+  font-weight: var(--fw-bold);
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  color: var(--accent);
+  margin-bottom: var(--sp-3);
+}
+
+.feedback-overlay__copy {
+  font-size: var(--fs-base);
+  color: var(--text-secondary);
+  margin-bottom: var(--sp-4);
+}
+
+.feedback-overlay__textarea {
+  display: block;
+  width: 100%;
+  min-height: 120px;
+  padding: var(--sp-3);
+  font-family: var(--font-family);
+  font-size: 1rem; /* 16px: stops iOS Safari auto-zooming on focus */
+  line-height: var(--lh-normal);
+  color: var(--text-primary);
+  background: var(--bg-input);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-md);
+  resize: vertical;
+  transition: border-color var(--transition-fast);
+}
+
+.feedback-overlay__textarea::placeholder {
+  color: var(--text-muted);
+}
+
+.feedback-overlay__textarea:focus {
+  outline: none;
+  border-color: var(--accent);
+}
+
+.feedback-overlay__textarea:disabled {
+  opacity: 0.6;
+}
+
+.feedback-overlay__note {
+  font-size: var(--fs-xs);
+  color: var(--text-muted);
+  margin-top: var(--sp-2);
+  min-height: 1em;
+}
+
+.feedback-overlay__actions {
+  display: flex;
+  gap: var(--sp-3);
+  justify-content: flex-end;
+  margin-top: var(--sp-4);
+}
+
+/* ============================================================
+   TOAST NOTIFICATIONS
+   ============================================================ */
+
+.toast-container {
+  position: fixed;
+  top: var(--sp-8);
+  left: 50%;
+  transform: translateX(-50%);
+  z-index: 400; /* above the fullscreen overlay (300) and its exit button (310) */
+  display: flex;
+  flex-direction: column;
+  gap: var(--sp-3);
+  pointer-events: none;
+}
+
+.toast {
+  padding: var(--sp-4) var(--sp-6);
+  border-radius: var(--radius-lg);
+  font-size: var(--fs-lg);
+  font-weight: var(--fw-semibold);
+  pointer-events: auto;
+  animation: toastIn 0.3s ease, toastOut 0.3s ease 3.6s forwards;
+  max-width: 480px;
+  text-align: center;
+  box-shadow: 0 8px 28px rgba(0, 0, 0, 0.5);
+}
+
+.toast--error {
+  background: var(--danger);
+  color: #fff;
+}
+
+.toast--success {
+  background: var(--success);
+  color: #fff;
+}
+
+.toast--info {
+  background: var(--bg-surface);
+  color: var(--text-primary);
+  border: 1px solid var(--border);
+}
+
+@keyframes toastIn {
+  from { opacity: 0; transform: translateY(-20px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+@keyframes toastOut {
+  from { opacity: 1; }
+  to { opacity: 0; }
+}
+
+/* ============================================================
+   COOKIE CONSENT BANNER (js/analytics.js)
+   ============================================================ */
+
+/* Sits just above the fixed footer, non-modal so the feed stays usable while
+   undecided. Below the fullscreen overlay (300) so it never covers playback.
+   Reject and Accept are the same size, side by side — refusing is as easy as
+   accepting. */
+.cookie-banner {
+  position: fixed;
+  left: var(--sp-4);
+  right: var(--sp-4);
+  bottom: calc(var(--footer-height) + var(--sp-3));
+  z-index: 200;
+  max-width: var(--max-width);
+  margin: 0 auto;
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: var(--sp-3) var(--sp-4);
+  padding: var(--sp-3) var(--sp-4);
+  background: var(--bg-surface);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-md);
+  box-shadow: 0 8px 28px rgba(0, 0, 0, 0.5);
+}
+
+.cookie-banner[hidden] {
+  display: none;
+}
+
+.cookie-banner__text {
+  flex: 1 1 280px;
+  margin: 0;
+  font-size: var(--fs-sm);
+  line-height: var(--lh-normal);
+  color: var(--text-secondary);
+}
+
+.cookie-banner__link {
+  color: var(--text-link);
+  white-space: nowrap;
+}
+
+.cookie-banner__actions {
+  display: flex;
+  gap: var(--sp-2);
+  margin-left: auto;
+}
+
+.cookie-banner__actions .btn {
+  min-width: 88px;
+  min-height: 36px;
+}
+
+/* ============================================================
+   FEED CONTROLS
+   ============================================================ */
+
+.feed__load-more {
+  text-align: center;
+  padding: var(--sp-6) var(--sp-4);
+}
+
+
+
+.feed__empty {
+  text-align: center;
+  padding: var(--sp-8);
+  color: var(--text-secondary);
+}
+
+/* Cold-load failure state (FE2): message + Retry button stacked in #feed-empty */
+.feed__empty-message {
+  margin: 0;
+}
+
+.feed__retry-btn {
+  margin-top: var(--sp-4);
+}
+
+.feed__searching {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: var(--sp-3);
+  padding: var(--sp-8);
+  color: var(--text-secondary);
+}
+
+.feed__searching p {
+  margin: 0;
+  font-size: var(--fs-sm);
+}
+
+/* ============================================================
+   RESPONSIVE — Tablet & Desktop
+   ============================================================ */
+
+@media (min-width: 640px) {
+  .header__user-name {
+    display: block;
+  }
+
+  /* Two tiles across on tablet (feed + its loading skeleton in lockstep) */
+  .feed,
+  .feed-skeleton {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}
+
+@media (min-width: 960px) {
+  :root {
+    /* Wider canvas so three tiles have room to breathe (~355px each). */
+    --max-width: 1120px;
+  }
+
+  /* Three tiles across on desktop — the Nebula grid (feed + skeleton) */
+  .feed,
+  .feed-skeleton {
+    grid-template-columns: repeat(3, 1fr);
+  }
+}
+
+/* ============================================================
+   LEGAL PAGES (Terms, Privacy)
+   ============================================================ */
+
+.legal-page {
+  padding: var(--sp-6) var(--sp-4);
+  max-width: 680px;
+  margin: 0 auto;
+}
+
+/* ============================================================
+   ADD-CHANNEL PAGE (operator-only, add-channel.html)
+   ============================================================ */
+
+.add-channel {
+  padding: var(--sp-6) var(--sp-4);
+  max-width: 480px;
+  margin: 0 auto;
+}
+
+.add-channel__title {
+  font-size: var(--fs-xl);
+  font-weight: var(--fw-bold);
+  color: var(--text-primary);
+  margin-bottom: var(--sp-2);
+}
+
+.add-channel__intro {
+  font-size: var(--fs-sm);
+  color: var(--text-secondary);
+  line-height: var(--lh-normal);
+  margin-bottom: var(--sp-6);
+}
+
+.add-channel__form {
+  display: flex;
+  flex-direction: column;
+  gap: var(--sp-2);
+}
+
+.add-channel__label {
+  font-size: var(--fs-xs);
+  font-weight: var(--fw-medium);
+  text-transform: uppercase;
+  letter-spacing: 0.03em;
+  color: var(--text-muted);
+  margin-top: var(--sp-3);
+}
+
+.add-channel__input {
+  width: 100%;
+  padding: var(--sp-3);
+  font-family: var(--font-family);
+  font-size: var(--fs-base);
+  color: var(--text-primary);
+  background: var(--bg-input);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-md);
+}
+
+.add-channel__input::placeholder {
+  color: var(--text-muted);
+}
+
+.add-channel__submit {
+  margin-top: var(--sp-5);
+  align-self: flex-start;
+}
+
+.add-channel__result {
+  margin-top: var(--sp-5);
+  font-size: var(--fs-sm);
+  line-height: var(--lh-normal);
+  color: var(--text-secondary);
+}
+
+.add-channel__result--ok {
+  color: var(--accent);
+}
+
+.add-channel__result--error {
+  color: var(--danger, #e5484d);
+}
+
+.legal-page__title {
+  font-size: var(--fs-xl);
+  font-weight: var(--fw-bold);
+  color: var(--text-primary);
+  margin-bottom: var(--sp-2);
+}
+
+.legal-page__updated {
+  font-size: var(--fs-sm);
+  color: var(--text-muted);
+  margin-bottom: var(--sp-8);
+}
+
+.legal-page__section {
+  margin-bottom: var(--sp-8);
+}
+
+.legal-page__section h3 {
+  font-size: var(--fs-md);
+  font-weight: var(--fw-semibold);
+  color: var(--text-primary);
+  margin-bottom: var(--sp-3);
+}
+
+.legal-page__section h4 {
+  font-size: var(--fs-base);
+  font-weight: var(--fw-medium);
+  color: var(--text-secondary);
+  margin-top: var(--sp-5);
+  margin-bottom: var(--sp-2);
+}
+
+.legal-page__section p {
+  font-size: var(--fs-base);
+  color: var(--text-secondary);
+  line-height: var(--lh-normal);
+  margin-bottom: var(--sp-3);
+}
+
+.legal-page__section ul {
+  padding-left: var(--sp-5);
+  margin-bottom: var(--sp-3);
+}
+
+.legal-page__section li {
+  font-size: var(--fs-base);
+  color: var(--text-secondary);
+  line-height: var(--lh-normal);
+  margin-bottom: var(--sp-2);
+}
+
+.legal-page__section code {
+  background: var(--bg-input);
+  padding: 1px 5px;
+  border-radius: var(--radius-sm);
+  font-size: var(--fs-sm);
+}
+
+.legal-page__section a {
+  color: var(--text-link);
+}
+
+.legal-page__section a:hover {
+  text-decoration: underline;
+}
+
+/* ============================================================
+   ERROR PAGE (404)
+   ============================================================ */
+
+.error-page {
+  max-width: 680px;
+  margin: 0 auto;
+  padding: var(--sp-8) var(--sp-4);
+  text-align: center;
+}
+
+.error-page__code {
+  font-size: 6rem;
+  font-weight: var(--fw-bold);
+  color: var(--accent);
+  line-height: 1;
+  margin-bottom: var(--sp-3);
+}
+
+.error-page__title {
+  font-size: var(--fs-xl);
+  font-weight: var(--fw-semibold);
+  color: var(--text-primary);
+  margin-bottom: var(--sp-3);
+}
+
+.error-page__text {
+  font-size: var(--fs-base);
+  color: var(--text-secondary);
+  line-height: var(--lh-normal);
+  margin-bottom: var(--sp-6);
+}
+
+/* ============================================================
+   ARTICLE CARD STYLES
+   ============================================================ */
+
+.article-card__embed {
+  position: relative;
+  width: 100%;
+  padding-top: 56.25%; /* 16:9 Aspect Ratio */
+  background: var(--bg-input);
+  overflow: hidden;
+}
+
+/* Covers the embed area so the whole image is one tap target */
+.article-card__embed-link {
+  position: absolute;
+  inset: 0;
+  display: block;
+}
+
+.article-card__img {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  transition: transform 0.3s ease;
+}
+
+/* No preview image: the flat newspaper icon centered on the dark tile
+   (the SVG carries its own size and draws in currentColor). */
+.article-card__placeholder {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: var(--text-muted);
+}
+
+.article-card__overlay {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: rgba(0,0,0,0.4);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  opacity: 0;
+  transition: opacity 0.3s ease;
+}
+
+.article-card:hover .article-card__overlay {
+  opacity: 1;
+}
+
+.article-card:hover .article-card__img {
+  transform: scale(1.05);
+}
+
+.article-card__link-btn {
+  text-decoration: none;
+  font-weight: 600;
+  box-shadow: 0 4px 12px rgba(0,0,0,0.5);
+}
+
+.feed-truncation-note {
+  text-align: center;
+  color: var(--text-secondary);
+  font-size: 0.85rem;
+  padding: 16px 0 24px;
+}

@@ -1,0 +1,293 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="robots" content="noindex, nofollow">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+  <!-- Security headers (GitHub Pages can't set real HTTP headers, so these ship
+       as meta). CSP is defense-in-depth for the app's innerHTML rendering: even
+       if an escape were ever missed, script-src has no 'unsafe-inline' and no
+       wildcard host, so an injected inline/remote <script> won't run — which is
+       what protects the session token in localStorage. Allowed origins: Google
+       Sign-In (accounts.google.com), YouTube embeds (youtube-nocookie), the
+       Apps Script backend (script.google[usercontent].com), and Google
+       Analytics (googletagmanager.com loader; beacons to
+       *.google-analytics.com / *.analytics.google.com).
+       img-src stays broad (https:) because article/preview images and avatars
+       come from arbitrary hosts — images are inert.
+       Clickjacking: frame-ancestors is spec-ignored in a <meta> CSP and Pages
+       can't send X-Frame-Options, so the JS frame-buster in js/bootstrap.js is
+       the working protection — don't add frame-ancestors here expecting it to
+       take effect, and don't remove the buster. -->
+  <meta http-equiv="Content-Security-Policy" content="default-src 'self'; base-uri 'self'; object-src 'none'; script-src 'self' https://accounts.google.com https://www.googletagmanager.com; style-src 'self' 'unsafe-inline' https://accounts.google.com; font-src 'self'; img-src 'self' data: https:; frame-src https://accounts.google.com https://www.youtube-nocookie.com https://www.youtube.com; connect-src 'self' https://script.google.com https://script.googleusercontent.com https://accounts.google.com https://oauth2.googleapis.com https://www.googletagmanager.com https://*.google-analytics.com https://*.analytics.google.com">
+  <meta name="referrer" content="strict-origin-when-cross-origin">
+
+  <!-- Google Analytics (GA4), opt-in: js/analytics.js shows the cookie banner and
+       loads gtag.js only after Accept. External file — no inline script under the CSP.
+       `defer`: it only needs to run before DOMContentLoaded (it waits for that
+       itself), and as a blocking script at the top of <head> it held the parser
+       for one round trip before the stylesheet and feed requests could start
+       (600ms on Slow 4G, measured 2026-10-07). Deferred scripts still run in
+       document order, so window.gtag exists before any module executes. -->
+
+  <title>How You Watch — Watch Content, No Algorithm</title>
+  <meta name="description" content="Chronological feed of the best watch YouTube content from 19 curated creators. No algorithm, just the latest videos and community discussion.">
+  
+  <link rel="canonical" href="https://www.howyouwatch.com/">
+
+  <!-- Open Graph / Twitter: what a shared link unfurls as. Absolute URLs —
+       scrapers don't resolve relative ones. The image is 1200×630
+       (assets/og-image.png). -->
+  <meta property="og:site_name" content="How You Watch">
+  <meta property="og:type" content="website">
+  <meta property="og:url" content="https://www.howyouwatch.com/">
+  <meta property="og:title" content="How You Watch — Watch Content, No Algorithm">
+  <meta property="og:description" content="Watch content in chronological order. No algorithm. Community first.">
+  <meta property="og:image" content="https://www.howyouwatch.com/assets/og-image.png">
+  <meta property="og:image:width" content="1200">
+  <meta property="og:image:height" content="630">
+  <meta property="og:image:alt" content="How You Watch — watch content in chronological order. No algorithm.">
+  <meta name="twitter:card" content="summary_large_image">
+  <meta name="twitter:title" content="How You Watch — Watch Content, No Algorithm">
+  <meta name="twitter:description" content="Watch content in chronological order. No algorithm. Community first.">
+  <meta name="twitter:image" content="https://www.howyouwatch.com/assets/og-image.png">
+
+  <!-- Icons: SVG for modern browsers, .ico fallback, PNG for iOS home screen. -->
+  <link rel="icon" href="/assets/favicon.svg" type="image/svg+xml">
+  <link rel="icon" href="/assets/favicon.ico" sizes="32x32">
+  <link rel="apple-touch-icon" href="/assets/apple-touch-icon.png">
+  <meta name="theme-color" content="#000000">
+
+  <!-- Installable app (PWA): the manifest makes Chrome/Edge/Android offer
+       "Install", and sw.js (registered by js/pwa.js after load) gives the
+       shell an offline fallback. Safari ignores the manifest's display mode
+       and reads the apple-* metas instead: a home-screen install opens
+       without browser chrome, with a black status bar and this title. -->
+  <link rel="manifest" href="/manifest.webmanifest">
+  <meta name="mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black">
+  <meta name="apple-mobile-web-app-title" content="How You Watch">
+
+  <!-- Fonts — self-hosted Poppins (see css/style.css @font-face). Preloading the
+       four latin weights lets them ride the first request wave instead of
+       waiting for the stylesheet to be parsed. -->
+  <link rel="preload" href="assets/fonts/poppins-400-latin.woff2" as="font" type="font/woff2" crossorigin>
+  <link rel="preload" href="assets/fonts/poppins-500-latin.woff2" as="font" type="font/woff2" crossorigin>
+  <link rel="preload" href="assets/fonts/poppins-600-latin.woff2" as="font" type="font/woff2" crossorigin>
+  <link rel="preload" href="assets/fonts/poppins-700-latin.woff2" as="font" type="font/woff2" crossorigin>
+  
+  <!-- Google Sign-In SDK -->
+  <script src="https://accounts.google.com/gsi/client" async defer></script>
+  
+  <!-- Styles -->
+  <link rel="stylesheet" href="css/style.css">
+
+  <!-- Module preloads: every module js/app.js and js/error-reporter.js reach.
+       The app ships 30 unbundled ES modules with an import chain 11 deep; left
+       to discovery the browser fetches them one dependency level at a time —
+       11 round trips, 5.6s on Slow 4G before the first card (measured
+       2026-10-07), with the feed data sitting ready since 1.8s. Listed here
+       they all go out in one wave as soon as the HTML parses. Keep in sync
+       with the import graph: tests/unit/module_preload.test.js fails when a
+       reachable module is missing or an unreachable one is listed. -->
+  <link rel="modulepreload" href="js/app.js">
+  <link rel="modulepreload" href="js/error-reporter.js">
+  <link rel="modulepreload" href="js/action-queue.js">
+  <link rel="modulepreload" href="js/api-client.js">
+  <link rel="modulepreload" href="js/api.js">
+  <link rel="modulepreload" href="js/auth-overlay.js">
+  <link rel="modulepreload" href="js/auth.js">
+  <link rel="modulepreload" href="js/bookmarks.js">
+  <link rel="modulepreload" href="js/bootstrap.js">
+  <link rel="modulepreload" href="js/cache.js">
+  <link rel="modulepreload" href="js/cards.js">
+  <link rel="modulepreload" href="js/comments-ui.js">
+  <link rel="modulepreload" href="js/comments.js">
+  <link rel="modulepreload" href="js/config.js">
+  <link rel="modulepreload" href="js/feed.js">
+  <link rel="modulepreload" href="js/feedback.js">
+  <link rel="modulepreload" href="js/flags.js">
+  <link rel="modulepreload" href="js/fullscreen.js">
+  <link rel="modulepreload" href="js/icons.js">
+  <link rel="modulepreload" href="js/lazy-iframe.js">
+  <link rel="modulepreload" href="js/prefetch.js">
+  <link rel="modulepreload" href="js/share.js">
+  <link rel="modulepreload" href="js/single-play.js">
+  <link rel="modulepreload" href="js/stars.js">
+  <link rel="modulepreload" href="js/state.js">
+  <link rel="modulepreload" href="js/storage.js">
+  <link rel="modulepreload" href="js/toast.js">
+  <link rel="modulepreload" href="js/utils.js">
+  <link rel="modulepreload" href="js/vendor/idb-keyval.js">
+  <link rel="modulepreload" href="js/views.js">
+  <link rel="modulepreload" href="js/votes.js">
+</head>
+<body>
+
+  <!-- ===== HEADER ===== -->
+  <header class="header" id="header">
+    <div class="header__inner">
+      <div class="header__logo">
+        <span class="header__logo-icon">Test</span>
+        <h1 class="header__title">How You Watch</h1>
+      </div>
+      <div class="header__auth" id="auth-container">
+        <!-- Google Sign-In button or user avatar renders here -->
+      </div>
+    </div>
+  </header>
+
+  <!-- ===== MAIN CONTENT ===== -->
+  <main class="main" id="main">
+
+    <!-- Feed View -->
+    <section class="feed-view" id="feed-view">
+
+      <h2 class="sr-only">Video feed</h2>
+
+      <!-- View Tabs: Latest / Top This Week / Favorites / Bookmarks / Channels -->
+      <div class="feed-tabs" id="feed-tabs" role="tablist" aria-label="Feed view">
+        <button class="feed-tab feed-tab--active" id="tab-latest" data-view="latest" role="tab" aria-selected="true" aria-controls="feed-container" tabindex="0">Latest</button>
+        <button class="feed-tab" id="tab-top" data-view="top" role="tab" aria-selected="false" aria-controls="feed-container" tabindex="-1">Top This Week</button>
+        <button class="feed-tab" id="tab-starred" data-view="starred" role="tab" aria-selected="false" aria-controls="feed-container" tabindex="-1">Favorites</button>
+        <button class="feed-tab" id="tab-bookmarks" data-view="bookmarks" role="tab" aria-selected="false" aria-controls="feed-container" tabindex="-1">Bookmarks</button>
+        <button class="feed-tab" id="tab-channels" data-view="channels" role="tab" aria-selected="false" aria-controls="feed-container" tabindex="-1">Channels</button>
+      </div>
+
+      <!-- Search & Category Filters -->
+      <div class="feed-controls" id="feed-controls">
+        <input
+          type="search"
+          class="feed-controls__search"
+          id="search-input"
+          placeholder="Search videos or channels…"
+          autocomplete="off"
+          aria-label="Search videos or channels"
+        >
+        <div class="feed-controls__chips" id="category-chips" role="group" aria-label="Filter by category"></div>
+      </div>
+
+      <!-- Channels-tab controls: platform filter chips (YouTube vs. article
+           sites). Hidden everywhere else; update() flips it with the tab. -->
+      <div class="feed-controls" id="channels-controls" style="display: none">
+        <div class="feed-controls__chips" id="platform-chips" role="group" aria-label="Filter channels by platform"></div>
+      </div>
+
+      <!-- Deep-linked card mount (share.js). Outside #feed-container on
+           purpose: the feed's revalidation diff, dedupe, and scroll-anchor
+           logic are all scoped to that container and must never see the
+           temporary card a ?v= link fetches. Placed BEFORE the feed so a
+           duplicate data-video-id resolves global selectors to this (the
+           visible, fullscreen) card. -->
+      <div class="feed" id="deeplink-container"></div>
+
+      <!-- Feed Cards Container. Single shared tabpanel for all four tabs;
+           aria-labelledby tracks the active tab (updated in views.js). -->
+      <div class="feed" id="feed-container" role="tabpanel" aria-labelledby="tab-latest">
+        <!-- Video cards with inline comments rendered here by JS -->
+      </div>
+
+      <!-- Loading Skeleton: six tiles fill ~two rows of the desktop grid -->
+      <div class="feed-skeleton" id="feed-skeleton" style="display: none;">
+        <div class="skeleton-card"><div class="skeleton-card__grid"><div class="skeleton-embed"></div><div class="skeleton-content"><div class="skeleton-line skeleton-line--title"></div><div class="skeleton-line skeleton-line--meta"></div><div class="skeleton-line skeleton-line--actions"></div></div></div></div>
+        <div class="skeleton-card"><div class="skeleton-card__grid"><div class="skeleton-embed"></div><div class="skeleton-content"><div class="skeleton-line skeleton-line--title"></div><div class="skeleton-line skeleton-line--meta"></div><div class="skeleton-line skeleton-line--actions"></div></div></div></div>
+        <div class="skeleton-card"><div class="skeleton-card__grid"><div class="skeleton-embed"></div><div class="skeleton-content"><div class="skeleton-line skeleton-line--title"></div><div class="skeleton-line skeleton-line--meta"></div><div class="skeleton-line skeleton-line--actions"></div></div></div></div>
+        <div class="skeleton-card"><div class="skeleton-card__grid"><div class="skeleton-embed"></div><div class="skeleton-content"><div class="skeleton-line skeleton-line--title"></div><div class="skeleton-line skeleton-line--meta"></div><div class="skeleton-line skeleton-line--actions"></div></div></div></div>
+        <div class="skeleton-card"><div class="skeleton-card__grid"><div class="skeleton-embed"></div><div class="skeleton-content"><div class="skeleton-line skeleton-line--title"></div><div class="skeleton-line skeleton-line--meta"></div><div class="skeleton-line skeleton-line--actions"></div></div></div></div>
+        <div class="skeleton-card"><div class="skeleton-card__grid"><div class="skeleton-embed"></div><div class="skeleton-content"><div class="skeleton-line skeleton-line--title"></div><div class="skeleton-line skeleton-line--meta"></div><div class="skeleton-line skeleton-line--actions"></div></div></div></div>
+      </div>
+
+      <!-- Infinite Scroll Sentinel -->
+      <div class="feed__load-more" id="load-more-container" style="display: none;">
+        <div class="spinner"></div>
+      </div>
+
+      <!-- Search Loading State -->
+      <div class="feed__searching" id="feed-searching" style="display: none;" role="status" aria-live="polite">
+        <div class="spinner"></div>
+        <p>Searching…</p>
+      </div>
+
+      <!-- Empty State -->
+      <div class="feed__empty" id="feed-empty" style="display: none;">
+        <p>No videos yet. Check back soon!</p>
+      </div>
+    </section>
+
+  </main>
+
+  <!-- ===== SIGN-IN / EMAIL-CONSENT OVERLAY =====
+       One dialog, three faces (js/auth-overlay.js): the Google sign-in
+       button, the first-sign-in marketing-email question, and the Email
+       preferences view. Content renders into __body per step. -->
+  <div class="auth-overlay" id="auth-overlay" hidden>
+    <div class="auth-overlay__backdrop" data-close></div>
+    <div class="auth-overlay__dialog" role="dialog" aria-modal="true" aria-labelledby="auth-overlay-title" tabindex="-1">
+      <button class="auth-overlay__close" data-close aria-label="Close">✕</button>
+      <h2 class="auth-overlay__title" id="auth-overlay-title"></h2>
+      <div class="auth-overlay__body"></div>
+    </div>
+  </div>
+
+  <!-- ===== FEEDBACK (js/feedback.js) =====
+       A floating button, bottom-right above the footer, styled like the
+       channel logo (volt disc, black mark with a burnt-orange outline).
+       Signed-in only: it starts hidden and app.js's auth listener shows it.
+       It opens a dialog with one textarea; the message lands in the
+       Feedback tab of the CUSTOMERS spreadsheet under the sender's email. -->
+  <button class="feedback-fab" id="feedback-fab" type="button" aria-label="Send feedback" aria-haspopup="dialog" aria-controls="feedback-overlay" hidden>
+    <svg viewBox="0 0 24 24" aria-hidden="true" focusable="false">
+      <path class="feedback-fab__bubble" d="M4 4.5h16a1.5 1.5 0 0 1 1.5 1.5v9a1.5 1.5 0 0 1-1.5 1.5h-7.2L8 20.6V16.5H4A1.5 1.5 0 0 1 2.5 15V6A1.5 1.5 0 0 1 4 4.5z"></path>
+      <circle class="feedback-fab__dot" cx="8" cy="10.5" r="1.2"></circle>
+      <circle class="feedback-fab__dot" cx="12" cy="10.5" r="1.2"></circle>
+      <circle class="feedback-fab__dot" cx="16" cy="10.5" r="1.2"></circle>
+    </svg>
+  </button>
+
+  <div class="feedback-overlay" id="feedback-overlay" hidden>
+    <div class="feedback-overlay__backdrop" data-close></div>
+    <form class="feedback-overlay__dialog" id="feedback-form" role="dialog" aria-modal="true" aria-labelledby="feedback-title" tabindex="-1" novalidate>
+      <button type="button" class="feedback-overlay__close" data-close aria-label="Close">✕</button>
+      <h2 class="feedback-overlay__title" id="feedback-title">Send feedback</h2>
+      <p class="feedback-overlay__copy">Found a bug, missing a creator, or have an idea? Tell us.</p>
+      <label class="sr-only" for="feedback-message">Your feedback</label>
+      <textarea class="feedback-overlay__textarea" id="feedback-message" rows="5" maxlength="2000" placeholder="What's on your mind?" required></textarea>
+      <p class="feedback-overlay__note" id="feedback-identity"></p>
+      <div class="feedback-overlay__actions">
+        <button type="submit" class="btn btn--primary" id="feedback-submit">Submit</button>
+      </div>
+    </form>
+  </div>
+
+  <!-- ===== TOAST NOTIFICATIONS ===== -->
+  <div class="toast-container" id="toast-container" role="status" aria-live="polite" aria-atomic="true"></div>
+
+  <!-- ===== FOOTER ===== -->
+  <footer class="footer" id="footer">
+    <div class="footer__inner">
+      <nav class="footer__nav" id="footer-nav">
+        <a href="./terms.html" class="footer__nav-link">Terms</a>
+        <a href="./privacy.html" class="footer__nav-link">Privacy</a>
+        <a href="/privacy.html#cookies" class="footer__nav-link" data-cookie-settings>Cookies</a>
+        <!-- Shown by js/pwa.js only once the browser fires beforeinstallprompt. -->
+        <a href="#" class="footer__nav-link" id="install-app" hidden>Install app</a>
+      </nav>
+      <div class="footer__meta">
+        <span class="footer__copyright">© <span id="footer-year">2026</span> How You Watch</span>
+        <span class="footer__version" id="app-version" title="Frontend version"></span>
+      </div>
+    </div>
+  </footer>
+  <script src="js/footer-year.js"></script>
+
+  <!-- ===== SCRIPTS ===== -->
+  <!-- error-reporter first: module tags run in order, so the reporter's
+       handlers are installed before app.js's import graph evaluates —
+       a module-level boot error is already observable. -->
+  <script type="module" src="js/error-reporter.js"></script>
+  <script type="module" src="js/app.js"></script>
+
+</body>
+</html>

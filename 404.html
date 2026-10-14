@@ -1,0 +1,71 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta http-equiv="Content-Security-Policy" content="default-src 'self'; base-uri 'self'; object-src 'none'; script-src 'self' https://accounts.google.com https://www.googletagmanager.com; style-src 'self' 'unsafe-inline' https://accounts.google.com; font-src 'self'; img-src 'self' data: https:; frame-src https://accounts.google.com https://www.youtube-nocookie.com https://www.youtube.com; connect-src 'self' https://script.google.com https://script.googleusercontent.com https://accounts.google.com https://oauth2.googleapis.com https://www.googletagmanager.com https://*.google-analytics.com https://*.analytics.google.com">
+  <meta name="referrer" content="strict-origin-when-cross-origin">
+
+  <!-- Google Analytics (GA4), opt-in: js/analytics.js shows the cookie banner and
+       loads gtag.js only after Accept. External file — no inline script under the CSP. -->
+  <title>Page Not Found — How You Watch</title>
+  <!-- Icons: SVG for modern browsers, .ico fallback, PNG for iOS home screen. -->
+  <link rel="icon" href="/assets/favicon.svg" type="image/svg+xml">
+  <link rel="icon" href="/assets/favicon.ico" sizes="32x32">
+  <link rel="apple-touch-icon" href="/assets/apple-touch-icon.png">
+  <meta name="theme-color" content="#000000">
+  <link rel="manifest" href="/manifest.webmanifest">
+  <meta name="description" content="This page doesn't exist. Head back to the How You Watch feed.">
+  <meta name="robots" content="noindex">
+
+  <!-- GitHub Pages serves this page for ANY missing path under the site,
+       including nested ones (/foo/bar), so every URL here must be absolute
+       from the domain root — relative paths would resolve against the
+       missing URL's directory and break. Rooted at "/" because the site is
+       served from the domain root on the custom domain; under the old
+       github.io/WatchDirectly subpath these must be "/". -->
+
+  <!-- Fonts -->
+
+  <!-- Styles -->
+  <link rel="stylesheet" href="/css/style.css">
+</head>
+<body>
+
+  <!-- ===== HEADER ===== -->
+  <header class="header" id="header">
+    <div class="header__inner">
+      <div class="header__logo">
+        <span class="header__logo-icon">Beta</span>
+        <a href="/" class="header__title-link"><h1 class="header__title">How You Watch</h1></a>
+      </div>
+    </div>
+  </header>
+
+  <!-- ===== MAIN CONTENT ===== -->
+  <main class="main">
+    <article class="error-page">
+      <p class="error-page__code">404</p>
+      <h2 class="error-page__title">Page not found</h2>
+      <p class="error-page__text">This page doesn't exist — maybe the link is old, or maybe it never was. The feed is still ticking, though.</p>
+      <a href="/" class="btn btn--primary">Back to the feed</a>
+    </article>
+  </main>
+
+  <!-- ===== FOOTER ===== -->
+  <footer class="footer" id="footer">
+    <div class="footer__inner">
+      <nav class="footer__nav" id="footer-nav">
+        <a href="/terms.html" class="footer__nav-link">Terms</a>
+        <a href="/privacy.html" class="footer__nav-link">Privacy</a>
+        <a href="/privacy.html#cookies" class="footer__nav-link" data-cookie-settings>Cookies</a>
+      </nav>
+      <div class="footer__meta">
+        <span class="footer__copyright">© <span id="footer-year">2026</span> How You Watch</span>
+      </div>
+    </div>
+  </footer>
+  <script src="/js/footer-year.js"></script>
+
+</body>
+</html>

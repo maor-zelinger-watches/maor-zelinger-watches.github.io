@@ -1,0 +1,65 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta http-equiv="Content-Security-Policy" content="default-src 'self'; base-uri 'self'; object-src 'none'; script-src 'self' https://accounts.google.com; style-src 'self' 'unsafe-inline' https://accounts.google.com; font-src 'self'; img-src 'self' data: https:; frame-src https://accounts.google.com https://www.youtube-nocookie.com https://www.youtube.com; connect-src 'self' https://script.google.com https://script.googleusercontent.com https://accounts.google.com https://oauth2.googleapis.com">
+  <meta name="referrer" content="strict-origin-when-cross-origin">
+  <meta name="robots" content="noindex, nofollow">
+  <title>Add a Channel — How You Watch</title>
+  <!-- Icons: SVG for modern browsers, .ico fallback, PNG for iOS home screen. -->
+  <link rel="icon" href="/assets/favicon.svg" type="image/svg+xml">
+  <link rel="icon" href="/assets/favicon.ico" sizes="32x32">
+  <link rel="apple-touch-icon" href="/assets/apple-touch-icon.png">
+  <meta name="theme-color" content="#000000">
+  <link rel="manifest" href="/manifest.webmanifest">
+  <meta name="description" content="Operator page for adding a channel to How You Watch.">
+
+  <!-- Fonts -->
+
+  <!-- Styles -->
+  <link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+
+  <!-- ===== HEADER ===== -->
+  <header class="header" id="header">
+    <div class="header__inner">
+      <div class="header__logo">
+        <span class="header__logo-icon">Test</span>
+        <a href="index.html" class="header__title-link"><h1 class="header__title">How You Watch</h1></a>
+      </div>
+    </div>
+  </header>
+
+  <!-- ===== MAIN CONTENT ===== -->
+  <main class="main">
+    <section class="add-channel">
+      <h2 class="add-channel__title">Add a channel</h2>
+      <p class="add-channel__intro">
+        Paste a YouTube channel link, a site's homepage, or an RSS feed URL.
+        Everything else — name, feed, avatar — is worked out automatically, and
+        the channel's content appears on the site within a few minutes.
+      </p>
+
+      <form class="add-channel__form" id="add-channel-form">
+        <label class="add-channel__label" for="channel-url">Channel or site link</label>
+        <input class="add-channel__input" id="channel-url" name="url" type="url"
+               placeholder="youtube.com/@handle — or hodinkee.com" required
+               autocomplete="off" spellcheck="false">
+
+        <label class="add-channel__label" for="admin-password">Password</label>
+        <input class="add-channel__input" id="admin-password" name="password"
+               type="password" required autocomplete="off">
+
+        <button class="btn btn--primary add-channel__submit" id="add-channel-submit"
+                type="submit">Add channel</button>
+      </form>
+
+      <p class="add-channel__result" id="add-channel-result" role="status" hidden></p>
+    </section>
+  </main>
+
+  <script type="module" src="js/add-channel.js"></script>
+</body>
+</html>
